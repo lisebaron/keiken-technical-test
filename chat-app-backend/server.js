@@ -1,67 +1,131 @@
 import express from 'express';
 import OpenAI from "openai";
 import cors from 'cors';
-import Message from './src/Models/message.model.js'
+import Message from './src/Models/message.model.js';
+import Topic from './src/Models/topic.model.js';
 import { connectToDB } from './src/database.js';
+import { isValidObjectId } from 'mongoose';
 
 const app = express();
-const openai = new OpenAI({ apiKey: ''});
 
 app.use(cors());
 app.use(express.json());
+connectToDB();
 
-// app.get("/test", (req, res) => {
-//     res.status(201).json({test:req.query});
-//     // const completion = await openai.chat.completions.create({
-//     //     messages: [{ role: "system", content: "What is a tomato?" }],
-//     //     model: "gpt-3.5-turbo",
-//     // });
-//     // let response = completion.choices[0].message.content;
-//     // res.json({ message: response });
-// });
-
-//create
+/**
+ * Create Message
+ */
 app.post("/create", async (req, res) => {
-    connectToDB();
-    //save messagecontent in db
+    /* req.body :
+    * apiKey, required
+    * message_content, required
+    * topicId
+    */
+
+    const topicId = req.body.topicId;
     const newMessage = new Message({
-        messageContent: "test !",
-        apiKey: "aaa"
-    })
+        message_content: req.body.message_content,
+        role: "user",
+        topic_id: topicId
+    });
+
+    let messageList = [];
+    if (isValidObjectId(topicId)) {
+        await Message.find({topic_id: topicId})
+        .then((messages) => {
+            messageList = messages.map(message => ({
+                role: message.role,
+                content: message.message_content
+            }));
+        });
+    }
+
+    messageList.push({role: newMessage.role, content: newMessage.message_content});
+
+    callOpenAI(req.body.apiKey, messageList).then(async (response) => {
+        if (!isValidObjectId(topicId)) {
+            const newTopic = createTopic(newMessage.message_content);
+            newMessage.topic_id = newTopic._id;
+        }
+
+        const newAnswer = new Message({
+            message_content: response.message.content,
+            role: response.message.role,
+            topic_id: newMessage.topic_id
+        });
+
+        //save in db
+        try {
+            await newMessage.save();
+            await newAnswer.save();
+            return res.status(201).json({newAnswer: newAnswer});
+        } catch (error) {
+            return res.status(400).json("Error when creating Messages : ", error);
+        }
+    });
+});
+
+/**
+ * Create Topic
+ * @param messageContent
+ */
+function createTopic(messageContent) {
+    const topic = new Topic({
+        name: messageContent,
+    });
 
     try {
-        await newMessage.save();
-        res.status(201).json({newMessage : newMessage});
+        topic.save();
+        return topic;
     } catch (error) {
-        console.error("Oh no : ", error);
+        console.error("Error when creating Topic : ", error);
     }
-    //send request to openAi
-    //save openAi response in db for display
-    //return response
-});
+}
 
-//get
-app.get("/getDiscussion", async (req, res) => {
-    connectToDB();
-    //get messages from db
-   
-    Message.find({})
+/**
+ * Request to OpenAI
+ * @param apiKey 
+ * @param messageList 
+ * @returns 
+ */
+async function callOpenAI(apiKey, messageList) {
+    const openai = new OpenAI({ apiKey: apiKey});
+    const completion = await openai.chat.completions.create({
+        messages: messageList,
+        model: "gpt-3.5-turbo",
+    });
+    
+    return completion.choices[0];
+}
+
+/**
+ * Get Messages By Topic Id
+ */
+app.get("/getMessages/:id", async (req, res) => {
+    const topicId = req.params.id;
+
+    //get messages from db by topicId
+    Message.find({topic_id: topicId})
         .then((messages) => {
-            res.status(200).json({messages: messages});
+            return res.status(200).json({messages: messages});
         })
         .catch ((error) => {
-            console.error("Oops ! : ", error);
+            return res.status(400).json("Error when getting Messages by topicId : ", error);
         })
 });
 
-// app.get('/test', async (req, res) => {
-//     const completion = await openai.chat.completions.create({
-//         messages: [{ role: "system", content: "What is a tomato?" }],
-//         model: "gpt-3.5-turbo",
-//       });
-//     let response = completion.choices[0].message.content;
-//     res.json({ message: response });
-// });
+/**
+ * Get All Topics
+ */
+app.get("/getTopics", (req, res) => {
+    Topic.find({})
+        .then((topics) => {
+            return res.status(200).json({topics: topics});
+        })
+        .catch((error) => {
+            return res.status(400).json("Error when getting Topics : ", error);
+        });
+});
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
