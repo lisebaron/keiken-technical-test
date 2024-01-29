@@ -2,7 +2,10 @@ import mongoose from "mongoose";
 
 // Define the Topic schema
 const topicSchema = new mongoose.Schema({
-    name: {type: String},
+    name: {
+        type: String,
+        required: true,
+    },
     createdAt: {
         type: Date,
         default: Date.now,
@@ -18,6 +21,6 @@ const topicSchema = new mongoose.Schema({
     collection: "Topic"
 });
 
-// Create model from the schema
+// Create model from schema
 const Topic = mongoose.model("Topic", topicSchema);
 export default Topic;

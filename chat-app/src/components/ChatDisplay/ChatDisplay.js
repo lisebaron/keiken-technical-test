@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import './ChatDisplay.css';
-import Prompt from '../Prompt/Prompt';
+import React, { useEffect, useRef, useState } from "react";
+import "./ChatDisplay.css";
+import Prompt from "../Prompt/Prompt";
 
 const ChatDisplay = ({currentTopicId, setCurrentTopicId}) => {
   const [messages, setMessages] = useState([]);
@@ -20,7 +20,9 @@ const ChatDisplay = ({currentTopicId, setCurrentTopicId}) => {
   })
 
   useEffect(() => {
-    if (currentTopicId !== null) {
+    if (currentTopicId == null || currentTopicId == '') {
+      setMessages([]);
+    } else {
       getMessageByTopicId();
     }
   }, [currentTopicId]);
@@ -41,7 +43,7 @@ const ChatDisplay = ({currentTopicId, setCurrentTopicId}) => {
   <div className="chat-display">
     <div ref={myDivRef} className="chat-box">
       {messages.map((message, index) => (
-        <div key={index} className='message-box'>
+        <div key={index} className="message-box">
 
           <span>{message.role}</span>
 

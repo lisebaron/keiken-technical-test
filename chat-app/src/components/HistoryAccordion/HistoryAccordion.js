@@ -1,7 +1,7 @@
-import React, { forwardRef, useEffect, useState } from 'react';
-import './HistoryAccordion.css';
+import React, { forwardRef, useEffect, useState } from "react";
+import "./HistoryAccordion.css";
 
-const HistoryAccordion = forwardRef(({ sendDataToParent, callGetAllTopics }, ref) => {
+const HistoryAccordion = forwardRef(({ sendDataToParent, callGetAllTopics, setCurrentTopicId }, ref) => {
   const [topics, setTopics] = useState([]);
 
   useEffect(() => {
@@ -27,6 +27,10 @@ const HistoryAccordion = forwardRef(({ sendDataToParent, callGetAllTopics }, ref
       .catch(error => console.error('Erreur lors de la requête vers le serveur:', error));
   }
 
+  function createNewTopic() {
+    setCurrentTopicId('');
+  }
+
   useEffect(() => {
     getAllTopics();
   }, [getAllTopics]);
@@ -36,8 +40,10 @@ const HistoryAccordion = forwardRef(({ sendDataToParent, callGetAllTopics }, ref
       <div className="history-accordion">
         <h3 className="title">Tech-test OpenAI</h3>
         <div className="button-box">
+        <button className="button color-gray" onClick={createNewTopic}>Nouveau Topic</button>
+        <hr className="color-dark-gray hr-margin"></hr>
           {topics.slice().reverse().map((topic) => (
-              <button className='button' key={topic._id} onClick={() => selectTopic(topic._id)}>{topic.name}</button>
+              <button className="button color-dark-gray" key={topic._id} onClick={() => selectTopic(topic._id)}>{topic.name}</button>
           ))}
         </div>
       </div>

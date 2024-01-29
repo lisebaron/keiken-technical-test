@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import './Prompt.css';
+import React, { useState } from "react";
+import "./Prompt.css";
 
 const Prompt = ({ sendDataToParent, topicId }) => {
   const [formData, setFormData] = useState({
@@ -55,7 +55,7 @@ const Prompt = ({ sendDataToParent, topicId }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="chat-prompt center">
+      <div className="center">
         <input className="input-key" type="text" name="apiKey" value={formData.apiKey} onChange={handleChange} placeholder="API Key" required/>
         <input className="input-prompt" type="text" name="messageContent" value={formData.messageContent} onChange={handleChange} placeholder="Type your message..." required/>
         <button type="submit">Send</button>

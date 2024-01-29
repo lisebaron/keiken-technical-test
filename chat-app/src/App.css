@@ -7,6 +7,19 @@ body, html, #root {
   color: #eaedfa;
 }
 
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #757c85;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #292E3F;
+}
+
 .app {
   overflow: hidden;
   width: 100%;

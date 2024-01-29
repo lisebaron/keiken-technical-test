@@ -1,7 +1,7 @@
-import './App.css';
-import React, { useEffect, useRef, useState } from 'react';
-import HistoryAccordion from './components/HistoryAccordion/HistoryAccordion';
-import ChatDisplay from './components/ChatDisplay/ChatDisplay';
+import "./App.css";
+import React, { useRef, useState } from "react";
+import HistoryAccordion from "./components/HistoryAccordion/HistoryAccordion";
+import ChatDisplay from "./components/ChatDisplay/ChatDisplay";
 
 function App() {
   const [currentTopicId, setCurrentTopicId] = useState(null);
@@ -21,7 +21,7 @@ function App() {
 
   return (
     <div className="app">
-      <HistoryAccordion ref={historyAccordionRef} sendDataToParent={handleDataFromChild} callGetAllTopics={callGetAllTopics}/>
+      <HistoryAccordion ref={historyAccordionRef} sendDataToParent={handleDataFromChild} setCurrentTopicId={setCurrentTopicId} callGetAllTopics={callGetAllTopics}/>
       <ChatDisplay currentTopicId={currentTopicId} setCurrentTopicId={setCurrentTopicId}/>
     </div>
   );

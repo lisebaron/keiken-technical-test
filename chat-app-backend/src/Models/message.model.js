@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 // Define the Prompt schema
 const messageSchema = new mongoose.Schema({
     role: {
-        type: String, // user / assistant
+        type: String, // user or assistant
         required: true
     },
     message_content: {
@@ -25,6 +25,6 @@ const messageSchema = new mongoose.Schema({
     collection: "Message"
 });
 
-// Create model from the schema
+// Create model from schema
 const Message = mongoose.model("Message", messageSchema);
 export default Message;
