@@ -2,11 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import './ChatDisplay.css';
 import Prompt from '../Prompt/Prompt';
 
-const ChatDisplay = ({topicId}) => {
+const ChatDisplay = ({currentTopicId, setCurrentTopicId}) => {
   const [messages, setMessages] = useState([]);
 
-  const handleDataFromChild = (question, answer) => {
+  const handleDataFromChild = (question, answer, topicId) => {
     setMessages([...messages, question, answer]);
+    setCurrentTopicId(topicId);
   };
   
   //scroll default to bottom
@@ -19,13 +20,13 @@ const ChatDisplay = ({topicId}) => {
   })
 
   useEffect(() => {
-    if (topicId !== null) {
+    if (currentTopicId !== null) {
       getMessageByTopicId();
     }
-  }, [topicId]);
+  }, [currentTopicId]);
 
   const getMessageByTopicId = () => {
-      fetch("/getMessages/" + topicId, {
+      fetch("/getMessages/" + currentTopicId, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -52,7 +53,7 @@ const ChatDisplay = ({topicId}) => {
       ))}
     </div>
 
-    <Prompt sendDataToParent={handleDataFromChild} topicId={topicId}/>
+    <Prompt sendDataToParent={handleDataFromChild} topicId={currentTopicId}/>
   </div>
   )
 };

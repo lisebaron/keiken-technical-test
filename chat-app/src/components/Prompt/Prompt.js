@@ -15,15 +15,14 @@ const Prompt = ({ sendDataToParent, topicId }) => {
     {
       role:answer.role,
       message_content: answer.message_content
-    });
+    }, answer.topic_id);
   }
 
   const sendNewQuestion = () => {
-    // ne pas oublier de gerer quand il n'y a pas de topicId
     fetch("/create", {
       method: 'POST',
       headers: {
-        // 'Authorization': `Bearer ${formData.apiKey}`,
+        'Authorization': `Bearer ${formData.apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
