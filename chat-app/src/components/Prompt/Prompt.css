@@ -1,1 +1,31 @@
-.Prompt {}
+form {
+    height: 100%;
+}
+.center {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 15px 120px 15px 0;
+}
+
+input {
+    padding: 15px;
+    border: 0;
+    border-radius: 5px;
+    background-color: #292E3F;
+}
+
+.input-prompt {
+    width: 795px;
+}
+
+.input-key {
+    width: 150px;
+}
+
+button {
+    background-color: #292E3F;
+    border: 0;
+    border-radius: 40%;
+    padding: 0 15px;
+}

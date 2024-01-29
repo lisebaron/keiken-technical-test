@@ -1,20 +1,19 @@
 import './App.css';
-import React, { useEffect } from 'react';
-import Prompt from './components/Prompt/Prompt';
+import React, { useEffect, useState } from 'react';
+import HistoryAccordion from './components/HistoryAccordion/HistoryAccordion';
+import ChatDisplay from './components/ChatDisplay/ChatDisplay';
 
 function App() {
-  useEffect(() => {
-    fetch('/test')
-      .then(response => response.json())
-      .then(data => console.log('Réponse du serveur:', data))
-      .catch(error => console.error('Erreur lors de la requête vers le serveur:', error));
-  }, []);
-  
+  const [currentTopicId, setCurrentTopicId] = useState(null);
+
+  const handleDataFromChild = (data) => {
+    setCurrentTopicId(data);
+  };
+
   return (
-    <div className="App">
-      <div className="chat-container">
-        <Prompt />
-      </div>
+    <div className="app">
+      <HistoryAccordion sendDataToParent={handleDataFromChild}/>
+      <ChatDisplay topicId={currentTopicId}/>
     </div>
   );
 }

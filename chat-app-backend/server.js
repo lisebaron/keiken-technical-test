@@ -16,12 +16,6 @@ connectToDB();
  * Create Message
  */
 app.post("/create", async (req, res) => {
-    /* req.body :
-    * apiKey, required
-    * message_content, required
-    * topicId
-    */
-
     const topicId = req.body.topicId;
     const newMessage = new Message({
         message_content: req.body.message_content,

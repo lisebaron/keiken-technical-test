@@ -1,23 +1,66 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import './Prompt.css';
 
-const Prompt = () => {
-  const [message, setMessage] = useState('');
+const Prompt = ({ sendDataToParent, topicId }) => {
+  const [formData, setFormData] = useState({
+    messageContent: '',
+    apiKey: ''
+  });
 
-  // appelée lorsque le formulaire est soumis.
+  function sendData(answer) {
+    sendDataToParent({
+      role:"user",
+      message_content: formData.messageContent
+    }, 
+    {
+      role:answer.role,
+      message_content: answer.message_content
+    });
+  }
+
+  const sendNewQuestion = () => {
+    // ne pas oublier de gerer quand il n'y a pas de topicId
+    fetch("/create", {
+      method: 'POST',
+      headers: {
+        // 'Authorization': `Bearer ${formData.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message_content: formData.messageContent,
+        topicId: topicId == null ? "" : topicId
+      })
+    })
+      .then(response => response.json())
+      .then(data => sendData(data.newAnswer))
+      .catch(error => console.error('Erreur lors de la requête vers le serveur:', error));
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
   const handleSubmit = (event) => {
-    event.preventDefault(); // Evite le rechargement de la page.
+    event.preventDefault();
+    sendNewQuestion();
 
-    console.log("Message : ", message);
-    setMessage('');
+    setFormData({
+      messageContent: '',
+      apiKey: ''
+    });
   };
 
   return (
-    <form className="chat-prompt" onSubmit={handleSubmit}>
-      <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Type your message..." />
-      {message}
-      <button type="submit">Send</button>
+    <form onSubmit={handleSubmit}>
+      <div className="chat-prompt center">
+        <input className="input-key" type="text" name="apiKey" value={formData.apiKey} onChange={handleChange} placeholder="API Key" />
+        <input className="input-prompt" type="text" name="messageContent" value={formData.messageContent} onChange={handleChange} placeholder="Type your message..." />
+        <button type="submit">Send</button>
+      </div>
     </form>
   );
 };
