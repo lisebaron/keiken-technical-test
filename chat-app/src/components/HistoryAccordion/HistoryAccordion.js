@@ -16,7 +16,7 @@ const HistoryAccordion = forwardRef(({ sendDataToParent, callGetAllTopics }, ref
   }
   
   const getAllTopics = () => {
-    fetch("/getTopics", {
+    fetch("http://localhost:4000/getTopics", {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

@@ -52,10 +52,12 @@ app.post("/create", async (req, res) => {
         try {
             await newMessage.save();
             await newAnswer.save();
-            return res.status(201).json({newAnswer: newAnswer});
+            res.status(201).json({newAnswer: newAnswer});
         } catch (error) {
-            return res.status(400).json("Error when creating Messages : ", error);
+            res.status(400).end("Error when creating Messages");
         }
+    }).catch((error) => {
+        res.status(400).end("no api key");
     });
 });
 
@@ -101,10 +103,10 @@ app.get("/getMessages/:id", async (req, res) => {
     //get messages from db by topicId
     Message.find({topic_id: topicId})
         .then((messages) => {
-            return res.status(200).json({messages: messages});
+            res.status(200).json({messages: messages});
         })
         .catch ((error) => {
-            return res.status(400).json("Error when getting Messages by topicId : ", error);
+            res.status(400).end("Error when getting Messages by topicId");
         })
 });
 
@@ -114,10 +116,10 @@ app.get("/getMessages/:id", async (req, res) => {
 app.get("/getTopics", (req, res) => {
     Topic.find({})
         .then((topics) => {
-            return res.status(200).json({topics: topics});
+            res.status(200).json({topics: topics});
         })
         .catch((error) => {
-            return res.status(400).json("Error when getting Topics : ", error);
+            res.status(400).end("Error when getting Topics");
         });
 });
 

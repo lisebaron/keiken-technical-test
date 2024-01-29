@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const dbURL = "mongodb://localhost:27017/mon-mongo-container";
+const dbURL = "mongodb://db:27017/mon-mongo-container";
 
 const connectToDB = async () => {
   try {

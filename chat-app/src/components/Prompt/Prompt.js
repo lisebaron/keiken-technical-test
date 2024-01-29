@@ -19,15 +19,15 @@ const Prompt = ({ sendDataToParent, topicId }) => {
   }
 
   const sendNewQuestion = () => {
-    fetch("/create", {
+    fetch("http://localhost:4000/create", {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${formData.apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         message_content: formData.messageContent,
-        topicId: topicId == null ? "" : topicId
+        topicId: topicId == null ? "" : topicId,
+        apiKey: formData.apiKey
       })
     })
       .then(response => response.json())
@@ -49,15 +49,15 @@ const Prompt = ({ sendDataToParent, topicId }) => {
 
     setFormData({
       messageContent: '',
-      apiKey: ''
+      apiKey: formData.apiKey
     });
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <div className="chat-prompt center">
-        <input className="input-key" type="text" name="apiKey" value={formData.apiKey} onChange={handleChange} placeholder="API Key" />
-        <input className="input-prompt" type="text" name="messageContent" value={formData.messageContent} onChange={handleChange} placeholder="Type your message..." />
+        <input className="input-key" type="text" name="apiKey" value={formData.apiKey} onChange={handleChange} placeholder="API Key" required/>
+        <input className="input-prompt" type="text" name="messageContent" value={formData.messageContent} onChange={handleChange} placeholder="Type your message..." required/>
         <button type="submit">Send</button>
       </div>
     </form>

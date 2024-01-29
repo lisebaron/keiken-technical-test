@@ -26,7 +26,7 @@ const ChatDisplay = ({currentTopicId, setCurrentTopicId}) => {
   }, [currentTopicId]);
 
   const getMessageByTopicId = () => {
-      fetch("/getMessages/" + currentTopicId, {
+      fetch("http://localhost:4000/getMessages/" + currentTopicId, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
